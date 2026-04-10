@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "Various experimental add-on functionalities for the Minecraft Transit Railway mod, made by Zbx1425, Aphrodite281, CodeCat",
+  "authors": [
+    "Zbx1425", "Aphrodite281", "CodeCat"
+  ],
+  "contact": {
+  },
+  "license": "MIT",
+  "icon": "assets/mtrsteamloco/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.example.TemplateMod"
+    ]
+  },
+  "mixins": [
+    "mtrsteamloco.mixins.json"
+  ],
+  "accessWidener": "mtrsteamloco.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.17",
+    "minecraft": "${minecraft}"
+  }
+}
