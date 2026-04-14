@@ -1,9 +1,11 @@
 {
   "required": true,
-  "package": "com.example.mixin",
+  "package": "cn.zbx1425.mtrsteamloco.mixin",
   "compatibilityLevel": "${java}",
   "mixins": [
-    "ExampleMixin"
+  ],
+  "client": [
+    "MinecraftWindowMixin"
   ],
   "injectors": {
     "defaultRequire": 1

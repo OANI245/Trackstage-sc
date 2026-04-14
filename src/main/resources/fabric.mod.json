@@ -14,7 +14,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.example.TemplateMod"
+      "cn.zbx1425.mtrsteamloco.ml.MLMain"
+    ],
+    "client": [
+      "cn.zbx1425.mtrsteamloco.ml.MLClientMain"
     ]
   },
   "mixins": [
@@ -22,7 +25,9 @@
   ],
   "accessWidener": "mtrsteamloco.accesswidener",
   "depends": {
+    "java": ">=17",
     "fabricloader": ">=0.17",
-    "minecraft": "${minecraft}"
+    "minecraft": "${minecraft}",
+    "mtr": ">=4.0.3"
   }
 }

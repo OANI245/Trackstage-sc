@@ -42,6 +42,8 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modApi("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 
+    modImplementation("maven.modrinth:minecraft-transit-railway:FABRIC-${property("deps.minecraft_transit_railway")}+${sc.current.version}")
+
     //fapi("fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0")
 }
 
