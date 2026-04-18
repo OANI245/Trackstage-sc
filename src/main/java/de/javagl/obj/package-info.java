@@ -8,5 +8,8 @@
  * {@link de.javagl.obj.ObjWriter#write(ReadableObj, java.io.OutputStream)}.
  * <br>
  */
+@Environment(EnvType.CLIENT)
 package de.javagl.obj;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;

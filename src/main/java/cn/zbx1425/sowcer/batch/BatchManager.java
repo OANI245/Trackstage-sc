@@ -4,9 +4,7 @@ import cn.zbx1425.sowcer.model.VertArrays;
 import cn.zbx1425.sowcer.object.VertArray;
 import cn.zbx1425.sowcer.shader.ShaderManager;
 import cn.zbx1425.sowcer.util.DrawContext;
-#if DEBUG
 import org.lwjgl.opengl.KHRDebug;
-#endif
 
 import java.util.*;
 
@@ -112,14 +110,8 @@ public class BatchManager {
     }
 
     private void pushDebugGroup(String name) {
-#if DEBUG
-        KHRDebug.glPushDebugGroup(KHRDebug.GL_DEBUG_SOURCE_APPLICATION, 65472, name);
-#endif
     }
 
     private void popDebugGroup() {
-#if DEBUG
-        KHRDebug.glPopDebugGroup();
-#endif
     }
 }

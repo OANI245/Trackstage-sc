@@ -13,11 +13,7 @@ public class PoseStack implements Posture {
 
     public PoseStack(Pose pose) {
         this();
-#if MC_VERSION >= "11903"
         this.impl.last().pose().mul(pose.pose().asMoj());
-#else
-        this.impl.last().pose().multiply(pose.pose().asMoj());
-#endif
         this.impl.last().normal().mul(pose.normal().asMoj());
     }
 
@@ -30,7 +26,7 @@ public class PoseStack implements Posture {
     }
 
     public void mul(Quaternionf rotation) {
-        impl.mulPose(rotation.asVanilla());
+        impl.mulPose(rotation.asMoj());
     }
 
     public Pose last() {

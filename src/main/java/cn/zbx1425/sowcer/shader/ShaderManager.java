@@ -88,11 +88,9 @@ public class ShaderManager {
         if (shaderInstance.PROJECTION_MATRIX != null) {
             shaderInstance.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
         }
-#if MC_VERSION >= "11800"
         if (shaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null) {
             shaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
         }
-#endif
         if (shaderInstance.COLOR_MODULATOR != null) {
             shaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
         }
@@ -105,11 +103,9 @@ public class ShaderManager {
         if (shaderInstance.FOG_COLOR != null) {
             shaderInstance.FOG_COLOR.set(RenderSystem.getShaderFogColor());
         }
-#if MC_VERSION >= "11800"
         if (shaderInstance.FOG_SHAPE != null) {
             shaderInstance.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
         }
-#endif
         if (shaderInstance.TEXTURE_MATRIX != null) {
             shaderInstance.TEXTURE_MATRIX.set(RenderSystem.getTextureMatrix());
         }

@@ -1,6 +1,5 @@
 package cn.zbx1425.sowcerext.model.loader;
 
-import cn.zbx1425.mtrsteamloco.BuildConfig;
 import cn.zbx1425.mtrsteamloco.UFEInfo;
 import cn.zbx1425.sowcer.batch.MaterialProp;
 import cn.zbx1425.sowcerext.model.Face;

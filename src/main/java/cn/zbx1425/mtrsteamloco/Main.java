@@ -4,6 +4,7 @@ import cn.zbx1425.mtrsteamloco.block.Blocks;
 import cn.zbx1425.mtrsteamloco.commands.Commands;
 import cn.zbx1425.mtrsteamloco.item.Items;
 import cn.zbx1425.mtrsteamloco.network.Packets;
+import mtr.ApiPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ public class Main {
         LOGGER.info("Created By Zbx1425, Aphrodite281, CodeCat");
         LOGGER.info("Starting...");
 
+        ApiPort.initApiCommon();
         Blocks.initClass();
         Items.initClass();
         Commands.commonRegister();
