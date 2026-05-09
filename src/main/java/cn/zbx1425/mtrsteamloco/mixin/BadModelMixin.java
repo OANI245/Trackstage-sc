@@ -22,22 +22,26 @@ import java.util.*;
 @Environment(EnvType.CLIENT)
 @Mixin(value = OptimizedModel.class, remap = false)
 public abstract class BadModelMixin {
-    @Unique public ModelCluster sowcerModeModel = null;
+    @Unique public List<ModelCluster> sowcerModeModels = null;
     @Unique private boolean objFlag;
 
-    @Unique private static final Map<Long, List<VertArray>> VERT_ARRAYS = new HashMap<>();
+    @Unique private static final Map<Long, List<ModelCluster>> UPLOADED_MODELS = new HashMap<>();
 
     @Inject(
             method = "lambda$fromObjModels$2",
-            at = @At("HEAD"),
-            cancellable = true)
+            at = @At("HEAD")
+    )
     private static void lambda$fromObjModels$2$head(List<VertexArray> uploadedParts, OptimizedModel.ObjModel objModel, CallbackInfo ci) {
-        if ((boolean) Config.getInstance().trackstageObjModelRender) {
-            var tid = Thread.currentThread().threadId();
-            if (!VERT_ARRAYS.containsKey(tid)) {
-                return;
+        long l = Thread.currentThread().threadId();
+        if (Config.getInstance().trackstageObjModelRender) {
+            try {
+                RawModel t = (RawModel) objModel.getClass().getField("sowcerModeRawModel").get(objModel);
+                t.generateNormals();
+                t.distinct();
+                UPLOADED_MODELS.get(l).add(MainClient.modelManager.uploadVertArrays(t));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            ci.cancel();
         }
     }
 
@@ -46,23 +50,25 @@ public abstract class BadModelMixin {
             at = @At("HEAD")
     )
     private static void fromObjModels$head(Collection<OptimizedModel.ObjModel> objModels, CallbackInfoReturnable<OptimizedModel> cir) {
-        VERT_ARRAYS.put(Thread.currentThread().threadId(), new ArrayList<>());
+        UPLOADED_MODELS.put(Thread.currentThread().threadId(), new ArrayList<>());
     }
 
     @Inject(
             method = "fromObjModels",
-            at = @At("RETURN")
+            at = @At("RETURN"),
+            cancellable = true
     )
     private static void fromObjModels$return(Collection<OptimizedModel.ObjModel> objModels, CallbackInfoReturnable<OptimizedModel> cir) {
+        long l = Thread.currentThread().threadId();
         try {
             var t = cir.getReturnValue();
             if (t == null) {
                 return;
             }
             ((BadModelMixin) ((Object) t)).objFlag = true;
-            //((BadModelMixin) ((Object) t)).sowcerModeModel = new ModelCluster(t);
-        } catch (Exception ignored) {} finally {
-            VERT_ARRAYS.remove(Thread.currentThread().threadId());
-        }
+            ((BadModelMixin) ((Object) t)).sowcerModeModels = UPLOADED_MODELS.get(l);
+            UPLOADED_MODELS.remove(l);
+            cir.setReturnValue(t);
+        } catch (Exception ignored) {}
     }
 }
