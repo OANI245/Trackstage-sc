@@ -1,11 +1,14 @@
 package cn.zbx1425.sowcer.object;
 
+import cn.zbx1425.mtrsteamloco.mixin.VertexArrayAccessor;
 import cn.zbx1425.sowcer.batch.MaterialProp;
 import cn.zbx1425.sowcer.model.Mesh;
 import cn.zbx1425.sowcer.util.GlStateTracker;
 import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 import com.mojang.blaze3d.systems.RenderSystem;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL33;
+import org.mtr.mapping.render.object.VertexArray;
 
 import java.io.Closeable;
 import java.util.concurrent.Executors;
@@ -24,6 +27,11 @@ public class VertArray implements Closeable {
 
     public VertArray() {
         id = GL33.glGenVertexArrays();
+    }
+
+    public VertArray(@NotNull VertexArray bva) {
+        var bvaa = ((VertexArrayAccessor) ((Object) bva));
+        this.id = bvaa.getId();
     }
 
     private VertArray(VertArray other) {

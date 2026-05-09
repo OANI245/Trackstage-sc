@@ -43,6 +43,9 @@ dependencies {
     modApi("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 
     modImplementation("maven.modrinth:minecraft-transit-railway:FABRIC-${property("deps.minecraft_transit_railway")}+${sc.current.version}")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.21.3")?.let { include(it) }
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.21")?.let { include(it) }
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.21.3")?.let { include(it) }
 
     //fapi("fabric-lifecycle-events-v1", "fabric-resource-loader-v0", "fabric-content-registries-v0")
 }

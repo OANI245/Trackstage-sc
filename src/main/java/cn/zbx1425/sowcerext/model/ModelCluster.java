@@ -1,5 +1,6 @@
 package cn.zbx1425.sowcerext.model;
 
+import cn.zbx1425.mtrsteamloco.mixin.BadModelAccessor;
 import cn.zbx1425.sowcer.batch.BatchManager;
 import cn.zbx1425.sowcer.batch.EnqueueProp;
 import cn.zbx1425.sowcer.batch.ShaderProp;
@@ -12,8 +13,11 @@ import cn.zbx1425.sowcer.math.Matrix4f;
 import cn.zbx1425.sowcerext.model.integration.BufferSourceProxy;
 import cn.zbx1425.sowcerext.reuse.ModelManager;
 import net.minecraft.resources.ResourceLocation;
+import org.mtr.mapping.mapper.OptimizedModel;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class ModelCluster implements Closeable {
@@ -22,6 +26,12 @@ public class ModelCluster implements Closeable {
     public final RawModel opaqueParts;
     public final VertArrays uploadedTranslucentParts;
     public final RawModel translucentParts;
+
+    /*public ModelCluster(OptimizedModel base) {
+        var ba = Objects.requireNonNull((BadModelAccessor) ((Object) base));
+        var uploadedParts = ba.getUploadedParts();
+        uploadedOpaqueParts = VertArrays.createFromBadVertArray(uploadedParts);
+    }*/
 
     public ModelCluster(RawModel source, VertAttrMapping mapping, ModelManager modelManager) {
         this.translucentParts = new RawModel();

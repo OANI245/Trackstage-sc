@@ -1,5 +1,6 @@
 package cn.zbx1425.mtrsteamloco.client;
 
+import cn.zbx1425.mtrsteamloco.Config;
 import cn.zbx1425.mtrsteamloco.commands.Commands;
 import cn.zbx1425.sowcer.util.DrawContext;
 import cn.zbx1425.sowcerext.reuse.AtlasManager;
@@ -19,6 +20,7 @@ public class MainClient {
     public static DrawContext drawContext = new DrawContext();
 
     public static void init() {
+        Config.read();
         ApiPort.initApiClient();
         Commands.clientRegister();
     }

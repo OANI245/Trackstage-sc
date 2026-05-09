@@ -7,6 +7,7 @@ import cn.zbx1425.sowcer.vertex.VertAttrMapping;
 import cn.zbx1425.sowcerext.model.RawMesh;
 import net.minecraft.resources.ResourceLocation;
 import cn.zbx1425.sowcer.math.Matrix4f;
+import org.mtr.mapping.render.object.VertexArray;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ import java.util.function.Function;
 public class VertArrays implements Closeable {
 
     public final ArrayList<VertArray> meshList = new ArrayList<>();
+
+    public static VertArrays createFromBadVertArray(List<VertexArray> bva) {
+    }
 
     public static VertArrays createAll(Model model, VertAttrMapping mapping, InstanceBuf instanceBuf) {
         VertArrays result = new VertArrays();

@@ -1,138 +1,112 @@
 package cn.zbx1425.mtrsteamloco;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.CrashReport;
+import net.minecraft.client.Minecraft;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
+/**
+ * Client Configs
+ * <br/>Read file by Jackson ObjectMapper
+ */
+@SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class Config {
-    private static Config instance = null;
-    private static final AttributeMap PROPERTIES = new AttributeMap();
-    private static final Map<Attribute, Object> DEFAULT_VALUES = new HashMap<>();
+    private static Config instance = new Config();
 
-    static {
-        //general
-        reg("trackstage_obj_model_render", AttributeType.BOOL, true);
-        reg("enable_script", AttributeType.BOOL, true);
+    public static final String CONFIG_PATH =
+            FabricLoader.getInstance()
+                    .getConfigDir().toAbsolutePath() + File.separator + "berries_trackstage_client.json";
 
-        //advanced
-        reg("developer_mode", AttributeType.BOOL, false);
-    }
+    @JsonProperty("trackstage_obj_model_render")        public boolean trackstageObjModelRender     = true;
+    @JsonProperty("hide_trains")                        public boolean hideTrains                   = false;
+    @JsonProperty("hide_taking_train")                  public boolean hideTakingTrain              = false;
+    @JsonProperty("hide_rails")                         public boolean hideRails                    = false;
 
-    @SuppressWarnings("all")
-    private static void reg(String id, AttributeType type) {
-        PROPERTIES.put(id, type);
-    }
-
-    @SuppressWarnings("all")
-    private static void reg(String id, AttributeType type, Object defaultValue) {
-        var attr = new Attribute(id, type);
-        PROPERTIES.put(id, attr);
-        if (type.defaultValue.getClass().isInstance(defaultValue)) {
-            DEFAULT_VALUES.put(attr, defaultValue);
-        } else {
-            DEFAULT_VALUES.put(attr, type.defaultValue);
-        }
-    }
-
-    public static final String CONFIG_PATH = FabricLoader.getInstance().getConfigDir().toAbsolutePath().toString() + File.separator + "berries_trackstage.json";
-
-    private Map<Attribute, Object> values;
-
-    private Config() {
-        this.values = DEFAULT_VALUES;
-    }
+    private Config() {}
 
     public static void read() {
+        read(getDefaultObjectMapper());
+    }
+
+    public static void read(ObjectMapper r) {
         File f = new File(CONFIG_PATH);
         if (!f.exists()) {
+            Main.LOGGER.info("Config file is not exists, creating a new file...");
             instance = new Config();
-            instance.save();
+            instance.save(r);
             return;
         }
 
-        try (Reader r = new BufferedReader(new FileReader(f))) {
-            JsonObject root = castOrDefault(JsonParser.parseReader(r), (JsonObject) null);
-            if (root == null) {
-                Main.LOGGER.error("Cannot load settings file: JSON File is empty");
-                onReadFailed();
-                return;
-            }
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            instance = r.readValue(br, Config.class);
         } catch (Exception e) {
-            Main.LOGGER.warn("Cannot load settings file: {}", e.getMessage());
-            onReadFailed();
+            Main.LOGGER.error("Failed to read config file", e);
         }
     }
 
     public void save() {
+        save(getDefaultObjectMapper());
     }
 
-    private static void onReadFailed() {
+    public void save(ObjectMapper s) {
+        File f = new File(CONFIG_PATH);
+        try {
+            if (!f.exists() && !f.createNewFile()) {
+                Main.LOGGER.error("Failed to create config file");
+                return;
+            }
+
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
+                s.writeValue(bw, this);
+            }
+        } catch (IOException e) {
+            Main.LOGGER.error("Failed to create config file", e);
+        }
+    }
+
+    public Config copy() {
+        try {
+            var t = new Config();
+            var fields = Config.class.getFields();
+            for (Field field : fields) {
+                field.set(t, field.get(this));
+            }
+            return t;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void restoreToDefault() {
         instance = new Config();
     }
 
-    public Object getValue(String id) {
-        return values.getOrDefault(PROPERTIES.getOrDefault(id, null), null);
-    }
-
+    @NotNull
     public static Config getInstance() {
-        if (instance == null) {
-            read();
-        }
-
-        return instance;
+        if (instance == null) { read(); }
+        return Objects.requireNonNull(instance);
     }
 
-    private static <T, R> R castOrDefault(T in, R def) {
-        try {
-            return (R) in;
-        } catch (Throwable ignored) {
-            return def;
-        }
-    }
-
-    public record Attribute(String id, AttributeType type) {
-        public String getId() {
-            return id;
-        }
-
-        public AttributeType getType() {
-            return type;
-        }
-
-        @Override
-        public int hashCode() {
-            return (int) (((long) id.hashCode() * (long) type.hashCode()) / 2);
-        }
-    }
-
-    public enum AttributeType {
-        STRING(""), INT(0), BOOL(false), FLOAT(0.0f);
-
-        private final Object defaultValue;
-
-        private AttributeType(Object defaultValue) {
-            this.defaultValue = defaultValue;
-        }
-
-        public Object getDefaultValue() {
-            return defaultValue;
-        }
-    }
-
-    public static class AttributeMap extends HashMap<String, Attribute> {
-        public Attribute put(String key, AttributeType type) {
-            return super.put(key, new Attribute(key, type));
-        }
-
-        public Attribute put(Attribute attr) {
-            return super.put(attr.id, attr);
-        }
+    private static ObjectMapper getDefaultObjectMapper() {
+        return new ObjectMapper().setDefaultPrettyPrinter(new DefaultPrettyPrinter());
     }
 }
